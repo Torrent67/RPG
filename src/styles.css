@@ -14,10 +14,21 @@ body {
   font-size:80px;
 }
 
-.linebottom {
-  border-bottom: 3px solid black;
+.topbar {
+  font-size:20px;
+  color:white;
+  background-color: black;
 }
 
-.borderright {
-  border-right: 3px solid black;
+.monstView {
+  height:600px;
+}
+
+.redtext {
+  color:red;
+}
+
+.player {
+  height:300px;
+  font-size:40px;
 }

@@ -3,178 +3,168 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
 import $ from 'jquery';
 
-var arrays = new Array(9);
-for (var i = 0; i < 9; i++)
-    arrays[i] = new Array(9);
 
-for (var j = 0; j < 9; j++) {
-  for (var k = 0; k < 9; k++) {
-    arrays[j][k] = ["0"];
-  }
+
+let monster = {
+  maxhp: 80,
+  hp: 80,
+  name: "monstah",
+  attack: 2,
+  defense: 4
 }
 
-var intx = 0;
-var inty = 0;
-
-function aSigh(x,y,z) {
-  if (z.includes(x)) {
-    intx = y;
-  }
+let skeleton = {
+  maxhp: 200,
+  hp: 200,
+  name: "Sir Skelington",
+  attack: 10,
+  defense: 1
 }
 
-function bSigh(x,y,z) {
-  if (z.includes(x)) {
-    inty = y;
-  }
+let slime = {
+  maxhp: 5,
+  hp: 5,
+  name: "weak slime",
+  attack: 1,
+  defense: 3
 }
 
-function assignRow(squareId) {
-  aSigh("a",0,squareId);
-  aSigh("b",1,squareId);
-  aSigh("c",2,squareId);
-  aSigh("d",3,squareId);
-  aSigh("e",4,squareId);
-  aSigh("f",5,squareId);
-  aSigh("g",6,squareId);
-  aSigh("h",7,squareId);
-  aSigh("i",8,squareId);
+let eyeball = {
+  maxhp: 60,
+  hp: 60,
+  name: "Looker",
+  attack: 20,
+  defense: 2
 }
 
-function assignCol(squareId) {
-  bSigh("0",0,squareId);
-  bSigh("1",1,squareId);
-  bSigh("2",2,squareId);
-  bSigh("3",3,squareId);
-  bSigh("4",4,squareId);
-  bSigh("5",5,squareId);
-  bSigh("6",6,squareId);
-  bSigh("7",7,squareId);
-  bSigh("8",8,squareId);
+let goblin = {
+  maxhp: 20,
+  hp: 20,
+  name: "goblin",
+  attack: 5,
+  defense: 5
 }
 
-function blockCheck(gridNum2,intx1,inty1,blockresult,minx,maxx,miny,maxy) {
-  if (intx1 >= minx && intx1 <= maxx && inty1 >= miny && inty1 <= maxy) {
-    return blockresult;
+let char1 = {
+  maxhp: 80,
+  hp: 80,
+  name: "Ness",
+  attack: 20,
+  defense: 100
+}
+let char2 = {
+  maxhp: 50,
+  hp: 50,
+  name: "Paula",
+  attack: 7,
+  defense: 100
+}
+let char3 = {
+  maxhp: 70,
+  hp: 70,
+  name: "Jeff",
+  attack: 15,
+  defense: 100
+}
+
+let party = [char1,char2,char3];
+let monsterList = [monster,skeleton,slime,eyeball,goblin];
+
+function attackHealCheck(att,def){
+  if ((att - def) < 0) {
+    return 0;
   } else {
-    return gridNum2;
+    return att - def;
   }
 }
 
-function gridCheck(intX,intY,gridNum) {
-  gridNum = blockCheck(gridNum,intX,intY,1,0,2,0,2);
-  gridNum = blockCheck(gridNum,intX,intY,2,0,2,3,5);
-  gridNum = blockCheck(gridNum,intX,intY,3,0,2,6,8);
-  gridNum = blockCheck(gridNum,intX,intY,4,3,5,0,2);
-  gridNum = blockCheck(gridNum,intX,intY,5,3,5,3,5);
-  gridNum = blockCheck(gridNum,intX,intY,6,3,5,6,8);
-  gridNum = blockCheck(gridNum,intX,intY,7,6,8,0,2);
-  gridNum = blockCheck(gridNum,intX,intY,8,6,8,3,5);
-  gridNum = blockCheck(gridNum,intX,intY,9,6,8,6,8);
-  return gridNum;
+function attack(attacker, reciever) {
+  reciever.hp = reciever.hp - (attackHealCheck(attacker.attack,reciever.defense));
+  $(".topbar").append("<li>" + attacker.name + " deals " + (attackHealCheck(attacker.attack,reciever.defense)) + " Damage! to " + reciever.name + "</li>");
 }
 
-function numCheckCol(intX,intY,playerInp,xflag){
-
-  for (var i = 0; i <= 8; i++) {
-    if (arrays[i][intY] === playerInp) {
-      xflag++;
-    }
-  }
-  return xflag;
-
-}
-
-function numCheckRow(intX,intY,playerInp,xflag){
-
-  for (var i = 0; i <= 8; i++) {
-    if (arrays[intX][i] === playerInp) {
-      xflag++;
-    }
-  }
-  return xflag;
-}
-
-function smallNumCheckCol(intX,intY,playerInp,xflag){
-  var endX = intX + 2;
-  var endY = intY + 2;
-  for (var y = intX; y <= endX; y++) {
-    for (var i = intY; i <= endY; i++) {
-      if (arrays[y][i] === playerInp) {
-        xflag++;
-    }
+function targetMonster(you, monst) {
+  attack(you,monst);
+  if (monst.hp <= 0) {
+    $(".topbar").append(you.name + " defeated a " + monst.name);
   }
 }
-  return xflag;
 
-}
-
-
-function numCheckGrid(gridId,intX,intY,playerInp,xflag) {
-  var gridStartx = 0;
-  var gridStarty = 0;
-  if(gridId === 1) {
-    gridStartx = 0;
-    gridStarty = 0;
-  } else if(gridId === 2) {
-    gridStartx = 0;
-    gridStarty = 3;
-  } else if(gridId === 3) {
-    gridStartx = 0;
-    gridStarty = 6;
-  } else if(gridId === 4) {
-    gridStartx = 3;
-    gridStarty = 0;
-  } else if(gridId === 5) {
-    gridStartx = 3;
-    gridStarty = 3;
-  } else if(gridId === 6) {
-    gridStartx = 3;
-    gridStarty = 6;
-  } else if(gridId === 7) {
-    gridStartx = 6;
-    gridStarty = 0;
-  } else if(gridId === 8) {
-    gridStartx = 6;
-    gridStarty = 3;
-  } else if(gridId === 9) {
-    gridStartx = 6;
-    gridStarty = 6;
+function monsterAttack(you, monst) {
+  attack(monst,you);
+  if (you.hp <= 0) {
+    $(".topbar").append(you.name + " is super dead!");
   }
-  return smallNumCheckCol(gridStartx,gridStarty,playerInp,xflag)
 }
 
+function isEven(value) {
+	if (value%2 == 0)
+		return true;
+	else
+		return false;
+}
+
+function monsterSwap(monsterCur) {
+  if (monsterCur.hp <= 0) {
+  let monsterNum = Math.floor((Math.random() * 5));
+  $("#enemy").html(monsterList[monsterNum].name);
+  monsterList[monsterNum].hp = monsterList[monsterNum].maxhp
+  return monsterList[monsterNum];
+} else {
+  $("#enemy").html(monsterCur.name);
+  return monsterCur;
+}
+}
 
 $(function(){
+  let currentMonster = monsterList[Math.floor((Math.random() * 5))];
+  $("#enemy").html(currentMonster.name);
+  $("#char1").html(char1.name + "<br>HP: " + char1.hp);
+  $("#char2").html(char2.name + "<br>HP: " + char2.hp);
+  $("#char3").html(char3.name + "<br>HP: " + char3.hp);
 
+let turn = 0;
+let wipe = 0;
   $(".card").click(function() {
-    var squareId = $(this).attr('id');
-      assignRow(squareId);
-      assignCol(squareId);
-    var playerInput = parseInt(prompt("Enter number"));
-    if (playerInput === 0) {
-    } else {
-    while (isNaN(playerInput) || playerInput < 1 || playerInput > 9) {
-      playerInput = parseInt(prompt("Enter numbers 1-9 only"));
+    $(".topbar").html("");
+    $(".topbar").removeClass("redtext");
+    if (char1.hp > 0 && (turn % 4) === 0) {
+      targetMonster(char1, currentMonster);
+      currentMonster = monsterSwap(currentMonster);
     }
-  }
-    var gridId = 0;
-    gridId = gridCheck(intx,inty,gridId);
+    if (char2.hp > 0 && (turn % 4) === 1) {
+      targetMonster(char2, currentMonster);
+      currentMonster = monsterSwap(currentMonster);
+    }
+    if (char3.hp > 0 && (turn % 4) === 2) {
+      targetMonster(char3, currentMonster);
+      currentMonster = monsterSwap(currentMonster);
+    }
 
-    var xflag = 0;
-    xflag = numCheckCol(intx,inty,playerInput,xflag);
-    xflag = numCheckRow(intx,inty,playerInput,xflag);
-    xflag = numCheckGrid(gridId,intx,inty,playerInput,xflag);
-
-    if (xflag === 0) {
-      if (playerInput === 0) {
-        arrays[intx][inty] = " ";
-      } else {
-      arrays[intx][inty] = playerInput;
-    }
-      document.getElementById(squareId).innerHTML = arrays[intx][inty];
+    if (currentMonster.hp > 0 && (turn % 4) === 3) {                  //Monster behavior and lose checks
+      $(".topbar").addClass("redtext");
+      let pTarget = Math.floor((Math.random() * 3));
+      while (party[pTarget].hp <= 0) {
+       pTarget = Math.floor((Math.random() * 3));
+       if(party[0].hp <= 0 && party[1].hp <= 0 && party[2].hp <= 0) {
+         $(".topbar").append("Everyone is super dead!");
+         wipe = 1;
+         break;
+       }
+      }
+      if (wipe === 0) {
+      monsterAttack(party[pTarget], currentMonster);
     } else {
-      alert("That number cannot be placed there");
+      $(".topbar").append("<br>YOU DIED");
     }
+    }
+    $("#char1").html(char1.name + "<br>HP: " + char1.hp);
+    $("#char2").html(char2.name + "<br>HP: " + char2.hp);
+    $("#char3").html(char3.name + "<br>HP: " + char3.hp);
+
+
+    turn += 1;
+
 
 
 

@@ -34,11 +34,20 @@ module.exports = {
       },
       {
         test: /\.js$/,
+        exclude: /node_modules/,
+        loader: "eslint-loader"
+      },
+      // new rule
+      {
+        test: /\.js$/,
         exclude: [
           /node_modules/,
           /spec/
         ],
-        loader: "eslint-loader"
+        loader: "babel-loader",
+        options: {
+          presets: ['es2015']
+        }
       }
     ]
   }
