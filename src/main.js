@@ -8,7 +8,7 @@ import $ from 'jquery';
 let monster = {
   maxhp: 10,
   hp: 10,
-  name: "Wolf",
+  name: " Lv 1 Wolf",
   attack: 2,
   defense: 3,
   giveExp: 10
@@ -17,7 +17,7 @@ let monster = {
 let skeleton = {
   maxhp: 30,
   hp: 30,
-  name: "Sir Skelington",
+  name: "Lv 1 Skelington",
   attack: 7,
   defense: 1,
   giveExp: 40
@@ -26,7 +26,7 @@ let skeleton = {
 let slime = {
   maxhp: 5,
   hp: 5,
-  name: "weak slime",
+  name: "Lv 1 slime",
   attack: 1,
   defense: 3,
   giveExp: 100
@@ -35,7 +35,7 @@ let slime = {
 let eyeball = {
   maxhp: 60,
   hp: 60,
-  name: "Looker",
+  name: "Lv 5 Looker",
   attack: 10,
   defense: 2,
   giveExp: 25
@@ -44,7 +44,7 @@ let eyeball = {
 let goblin = {
   maxhp: 20,
   hp: 20,
-  name: "goblin",
+  name: "Lv 1 Goblin",
   attack: 5,
   defense: 3,
   giveExp: 100
@@ -129,8 +129,7 @@ function levelupCheck(char) {
   if (char.exp > 100 * char.lv) {
     char.exp -= 100 * char.lv;
     char.lv += 1;
-    char.attack += 5;
-    char.defense += 5;
+    char.attack += 3;
     char.maxhp += 5;
     char.hp = char.maxhp;
   }
