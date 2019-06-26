@@ -6,19 +6,21 @@ import $ from 'jquery';
 
 
 let monster = {
-  maxhp: 80,
-  hp: 80,
-  name: "monstah",
+  maxhp: 10,
+  hp: 10,
+  name: "Wolf",
   attack: 2,
-  defense: 4
+  defense: 3,
+  giveExp: 10
 }
 
 let skeleton = {
-  maxhp: 200,
-  hp: 200,
+  maxhp: 30,
+  hp: 30,
   name: "Sir Skelington",
-  attack: 10,
-  defense: 1
+  attack: 7,
+  defense: 1,
+  giveExp: 40
 }
 
 let slime = {
@@ -26,15 +28,17 @@ let slime = {
   hp: 5,
   name: "weak slime",
   attack: 1,
-  defense: 3
+  defense: 3,
+  giveExp: 100
 }
 
 let eyeball = {
   maxhp: 60,
   hp: 60,
   name: "Looker",
-  attack: 20,
-  defense: 2
+  attack: 10,
+  defense: 2,
+  giveExp: 25
 }
 
 let goblin = {
@@ -42,29 +46,36 @@ let goblin = {
   hp: 20,
   name: "goblin",
   attack: 5,
-  defense: 5
+  defense: 3,
+  giveExp: 100
 }
 
 let char1 = {
-  maxhp: 80,
-  hp: 80,
+  lv: 1,
+  exp: 0,
+  maxhp: 20,
+  hp: 20,
   name: "Ness",
-  attack: 20,
-  defense: 100
+  attack: 5,
+  defense: 0
 }
 let char2 = {
-  maxhp: 50,
-  hp: 50,
+  lv: 1,
+  exp: 0,
+  maxhp: 15,
+  hp: 15,
   name: "Paula",
-  attack: 7,
-  defense: 100
+  attack: 3,
+  defense: 0
 }
 let char3 = {
-  maxhp: 70,
-  hp: 70,
+  lv: 1,
+  exp: 0,
+  maxhp: 25,
+  hp: 25,
   name: "Jeff",
-  attack: 15,
-  defense: 100
+  attack: 4,
+  defense: 0
 }
 
 let party = [char1,char2,char3];
@@ -79,7 +90,7 @@ function attackHealCheck(att,def){
 }
 
 function attack(attacker, reciever) {
-  reciever.hp = reciever.hp - (attackHealCheck(attacker.attack,reciever.defense));
+  reciever.hp = reciever.hp - (attackHealCheck(attacker.attack, reciever.defense));
   $(".topbar").append("<li>" + attacker.name + " deals " + (attackHealCheck(attacker.attack,reciever.defense)) + " Damage! to " + reciever.name + "</li>");
 }
 
@@ -97,18 +108,16 @@ function monsterAttack(you, monst) {
   }
 }
 
-function isEven(value) {
-	if (value%2 == 0)
-		return true;
-	else
-		return false;
-}
 
 function monsterSwap(monsterCur) {
   if (monsterCur.hp <= 0) {
-  let monsterNum = Math.floor((Math.random() * 5));
+    for (var i = 0; i <= 2; i++) {
+      party[i].exp += monsterCur.giveExp;
+      levelupCheck(party[i]);
+    }
+  var monsterNum = Math.floor((Math.random() * 5));
   $("#enemy").html(monsterList[monsterNum].name);
-  monsterList[monsterNum].hp = monsterList[monsterNum].maxhp
+  monsterList[monsterNum].hp = monsterList[monsterNum].maxhp;
   return monsterList[monsterNum];
 } else {
   $("#enemy").html(monsterCur.name);
@@ -116,12 +125,23 @@ function monsterSwap(monsterCur) {
 }
 }
 
+function levelupCheck(char) {
+  if (char.exp > 100 * char.lv) {
+    char.exp -= 100 * char.lv;
+    char.lv += 1;
+    char.attack += 5;
+    char.defense += 5;
+    char.maxhp += 5;
+    char.hp = char.maxhp;
+  }
+}
+
 $(function(){
-  let currentMonster = monsterList[Math.floor((Math.random() * 5))];
+  var currentMonster = monsterList[Math.floor((Math.random() * 5))];
   $("#enemy").html(currentMonster.name);
-  $("#char1").html(char1.name + "<br>HP: " + char1.hp);
-  $("#char2").html(char2.name + "<br>HP: " + char2.hp);
-  $("#char3").html(char3.name + "<br>HP: " + char3.hp);
+  $("#char1").html(char1.name + "<br>Lv: " + char1.lv + "<br>HP: " + char1.hp);
+  $("#char2").html(char2.name + "<br>Lv: " + char1.lv + "<br>HP: " + char2.hp);
+  $("#char3").html(char3.name + "<br>Lv: " + char1.lv + "<br>HP: " + char3.hp);
 
 let turn = 0;
 let wipe = 0;
@@ -158,10 +178,9 @@ let wipe = 0;
       $(".topbar").append("<br>YOU DIED");
     }
     }
-    $("#char1").html(char1.name + "<br>HP: " + char1.hp);
-    $("#char2").html(char2.name + "<br>HP: " + char2.hp);
-    $("#char3").html(char3.name + "<br>HP: " + char3.hp);
-
+    $("#char1").html(char1.name + "<br>Lv: " + char1.lv + "<br>HP: " + char1.hp);
+    $("#char2").html(char2.name + "<br>Lv: " + char1.lv + "<br>HP: " + char2.hp);
+    $("#char3").html(char3.name + "<br>Lv: " + char1.lv + "<br>HP: " + char3.hp);
 
     turn += 1;
 
