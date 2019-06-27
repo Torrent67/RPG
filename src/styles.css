@@ -29,6 +29,10 @@ body {
 }
 
 .player {
-  height:300px;
+  height:200px;
   font-size:40px;
+}
+
+.playercon {
+  height:100px;
 }

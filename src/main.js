@@ -3,9 +3,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
 import $ from 'jquery';
 
+let battle = {
+  monster: []
+}
 
-
-let monster = {
+let wolf = {
   maxhp: 10,
   hp: 10,
   name: " Lv 1 Wolf",
@@ -57,7 +59,8 @@ let char1 = {
   hp: 20,
   name: "Ness",
   attack: 5,
-  defense: 0
+  defense: 0,
+  tur: 0
 }
 let char2 = {
   lv: 1,
@@ -66,7 +69,8 @@ let char2 = {
   hp: 15,
   name: "Paula",
   attack: 3,
-  defense: 0
+  defense: 0,
+  tur: 1
 }
 let char3 = {
   lv: 1,
@@ -75,11 +79,12 @@ let char3 = {
   hp: 25,
   name: "Jeff",
   attack: 4,
-  defense: 0
+  defense: 0,
+  tur: 2
 }
 
 let party = [char1,char2,char3];
-let monsterList = [monster,skeleton,slime,eyeball,goblin];
+let monsterList = [wolf,skeleton,slime,eyeball,goblin];
 
 function attackHealCheck(att,def){
   if ((att - def) < 0) {
@@ -111,17 +116,16 @@ function monsterAttack(you, monst) {
 
 function monsterSwap(monsterCur) {
   if (monsterCur.hp <= 0) {
-    for (var i = 0; i <= 2; i++) {
+    for (let i = 0; i <= 2; i++) {
       party[i].exp += monsterCur.giveExp;
       levelupCheck(party[i]);
     }
-  var monsterNum = Math.floor((Math.random() * 5));
+  let monsterNum = Math.floor((Math.random() * 5));
   $("#enemy").html(monsterList[monsterNum].name);
   monsterList[monsterNum].hp = monsterList[monsterNum].maxhp;
-  return monsterList[monsterNum];
+  battle.monster[0] = monsterList[monsterNum];
 } else {
   $("#enemy").html(monsterCur.name);
-  return monsterCur;
 }
 }
 
@@ -135,51 +139,65 @@ function levelupCheck(char) {
   }
 }
 
-$(function(){
-  var currentMonster = monsterList[Math.floor((Math.random() * 5))];
-  $("#enemy").html(currentMonster.name);
+function printStatus(char1,char2,char3) {
   $("#char1").html(char1.name + "<br>Lv: " + char1.lv + "<br>HP: " + char1.hp);
   $("#char2").html(char2.name + "<br>Lv: " + char1.lv + "<br>HP: " + char2.hp);
   $("#char3").html(char3.name + "<br>Lv: " + char1.lv + "<br>HP: " + char3.hp);
+}
+
+function playerattacking(you,turn,currentMonster) {
+  if (you.hp > 0 && (turn % 4) === you.tur) {
+    targetMonster(you, currentMonster);
+    monsterSwap(currentMonster);
+  } else if (you.hp <= 0) {
+    $(".topbar").append(you.name + " is super dead!<br>");
+  }
+}
+
+function attacking(char1,char2,char3,turn,currentMonster) {
+
+  playerattacking(char1,turn,currentMonster);
+  playerattacking(char2,turn,currentMonster);
+  playerattacking(char3,turn,currentMonster);
+}
+
+function monsterTurn(turn) {
+  let wipe = 0;
+  if (battle.monster[0].hp > 0 && (turn % 4) === 3) {                  //Monster behavior and lose checks
+    $(".topbar").addClass("redtext");
+    let pTarget = Math.floor((Math.random() * 3));
+    while (party[pTarget].hp <= 0) {
+     pTarget = Math.floor((Math.random() * 3));
+     if(party[0].hp <= 0 && party[1].hp <= 0 && party[2].hp <= 0) {
+       $(".topbar").html("");
+       $(".topbar").append("Everyone is super dead!");
+       wipe = 1;
+       break;
+     }
+    }
+    if (wipe === 0) {
+    monsterAttack(party[pTarget], battle.monster[0]);
+  } else {
+    $(".topbar").append("<br>YOU DIED");
+  }
+  }
+}
+
+
+
+$(function(){
+  battle.monster[0] = monsterList[Math.floor((Math.random() * 5))];
+  $("#enemy").html(battle.monster[0].name);
+  printStatus(char1,char2,char3);
 
 let turn = 0;
-let wipe = 0;
   $(".card").click(function() {
     $(".topbar").html("");
     $(".topbar").removeClass("redtext");
-    if (char1.hp > 0 && (turn % 4) === 0) {
-      targetMonster(char1, currentMonster);
-      currentMonster = monsterSwap(currentMonster);
-    }
-    if (char2.hp > 0 && (turn % 4) === 1) {
-      targetMonster(char2, currentMonster);
-      currentMonster = monsterSwap(currentMonster);
-    }
-    if (char3.hp > 0 && (turn % 4) === 2) {
-      targetMonster(char3, currentMonster);
-      currentMonster = monsterSwap(currentMonster);
-    }
+    attacking(char1,char2,char3,turn,battle.monster[0]);
+    monsterTurn(turn);
 
-    if (currentMonster.hp > 0 && (turn % 4) === 3) {                  //Monster behavior and lose checks
-      $(".topbar").addClass("redtext");
-      let pTarget = Math.floor((Math.random() * 3));
-      while (party[pTarget].hp <= 0) {
-       pTarget = Math.floor((Math.random() * 3));
-       if(party[0].hp <= 0 && party[1].hp <= 0 && party[2].hp <= 0) {
-         $(".topbar").append("Everyone is super dead!");
-         wipe = 1;
-         break;
-       }
-      }
-      if (wipe === 0) {
-      monsterAttack(party[pTarget], currentMonster);
-    } else {
-      $(".topbar").append("<br>YOU DIED");
-    }
-    }
-    $("#char1").html(char1.name + "<br>Lv: " + char1.lv + "<br>HP: " + char1.hp);
-    $("#char2").html(char2.name + "<br>Lv: " + char1.lv + "<br>HP: " + char2.hp);
-    $("#char3").html(char3.name + "<br>Lv: " + char1.lv + "<br>HP: " + char3.hp);
+    printStatus(char1,char2,char3);
 
     turn += 1;
 
