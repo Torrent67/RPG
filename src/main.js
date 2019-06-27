@@ -8,10 +8,14 @@ let battle = {
 }
 
 let wolf = {
+  name: " Lv 1 Wolf",
   maxhp: 10,
   hp: 10,
-  name: " Lv 1 Wolf",
+  attackPlus: function() {
+    return this.attack + this.attackMod;
+  },
   attack: 2,
+  attackMod: 0,
   defequip: 2,
   deftemp: 0,
   giveExp: 10,
@@ -21,10 +25,14 @@ let wolf = {
 }
 
 let skeleton = {
+  name: "Lv 1 Skelington",
   maxhp: 30,
   hp: 30,
-  name: "Lv 1 Skelington",
+  attackPlus: function() {
+    return this.attack + this.attackMod;
+  },
   attack: 7,
+  attackMod: 0,
   defequip: 1,
   deftemp: 0,
   giveExp: 40,
@@ -34,10 +42,14 @@ let skeleton = {
 }
 
 let slime = {
+  name: "Lv 1 slime",
   maxhp: 5,
   hp: 5,
-  name: "Lv 1 slime",
+  attackPlus: function() {
+    return this.attack + this.attackMod;
+  },
   attack: 1,
+  attackMod: 0,
   defequip: 1,
   deftemp: 0,
   giveExp: 100,
@@ -47,10 +59,14 @@ let slime = {
 }
 
 let eyeball = {
+  name: "Lv 5 Looker",
   maxhp: 60,
   hp: 60,
-  name: "Lv 5 Looker",
+  attackPlus: function() {
+    return this.attack + this.attackMod;
+  },
   attack: 10,
+  attackMod: 0,
   defequip: 2,
   deftemp: 0,
   giveExp: 25,
@@ -60,10 +76,14 @@ let eyeball = {
 }
 
 let goblin = {
+  name: "Lv 1 Goblin",
   maxhp: 20,
   hp: 20,
-  name: "Lv 1 Goblin",
+  attackPlus: function() {
+    return this.attack + this.attackMod;
+  },
   attack: 5,
+  attackMod: 0,
   defequip: 3,
   deftemp: 0,
   giveExp: 100,
@@ -73,12 +93,16 @@ let goblin = {
 }
 
 let char1 = {
+  name: "Ness",
   lv: 1,
   exp: 0,
   maxhp: 20,
   hp: 20,
-  name: "Ness",
+  attackPlus: function() {
+    return this.attack + this.attackMod;
+  },
   attack: 5,
+  attackMod: 0,
   defequip: 0,
   deftemp: 0,
   tur: 0,
@@ -87,12 +111,16 @@ let char1 = {
   }
 }
 let char2 = {
+  name: "Paula",
   lv: 1,
   exp: 0,
   maxhp: 15,
   hp: 15,
-  name: "Paula",
-  attack: 3,
+  attackPlus: function() {
+    return this.attack + this.attackMod;
+  },
+  attack: 5,
+  attackMod: 0,
   defequip: 0,
   deftemp: 0,
   tur: 1,
@@ -101,12 +129,16 @@ let char2 = {
   }
 }
 let char3 = {
+  name: "Jeff",
   lv: 1,
   exp: 0,
   maxhp: 25,
   hp: 25,
-  name: "Jeff",
-  attack: 4,
+  attackPlus: function() {
+    return this.attack + this.attackMod;
+  },
+  attack: 5,
+  attackMod: 0,
   defequip: 0,
   deftemp: 0,
   tur: 2,
@@ -123,6 +155,7 @@ function playerattacking(you,turn,currentMonster) {
   if (you.hp > 0 && (turn % 4) === you.tur) {
     targetMonster(you, currentMonster);
     monsterSwap();
+    chargeClear(you);
   } else if (you.hp <= 0) {
     $(".topbar").append(you.name + " is super dead!<br>");
   }
@@ -133,6 +166,39 @@ function attacking(char1,char2,char3,turn,currentMonster) {
   playerattacking(char1,turn,currentMonster);
   playerattacking(char2,turn,currentMonster);
   playerattacking(char3,turn,currentMonster);
+}
+
+function chargeClear(you) {
+  you.attackMod = 0;
+  $("#char" + (you.tur + 1)).removeClass("yellowborder");
+}
+
+function playerCharging(you,turn) {
+  if (you.hp > 0 && (turn % 4) === you.tur) {
+    you.attackMod += you.attack;
+      if ((turn % 4) === 0) {
+        $(".topbar").html(you.name + " is Powering up!");
+        $("#char1").addClass("yellowborder");
+      }
+      if ((turn % 4) === 1) {
+        $(".topbar").html(you.name + " is Powering up!");
+        $("#char2").addClass("yellowborder");
+      }
+      if ((turn % 4) === 2) {
+        $(".topbar").html(you.name + " is Powering up!");
+        $("#char3").addClass("yellowborder");
+      }
+
+  } else if (you.hp <= 0) {
+    $(".topbar").append(you.name + " is super dead!<br>");
+  }
+}
+
+function charging(char1,char2,char3,turn) {
+
+  playerCharging(char1,turn);
+  playerCharging(char2,turn);
+  playerCharging(char3,turn);
 }
 
 function playerDefending(you,turn) {
@@ -163,6 +229,12 @@ function defending(char1,char2,char3,turn) {
   playerDefending(char3,turn);
 }
 
+function clearDefense(){
+  for (var i = 0; i <= 2; i++) {
+    party[i].deftemp = 0;
+    $("#char" + (i + 1)).removeClass("greenborder");
+  }
+}
 
 function attackHealCheck(att,def){
   if ((att - def) < 0) {
@@ -174,8 +246,8 @@ function attackHealCheck(att,def){
 
 //Player Combat
 function attack(attacker, reciever) {
-  reciever.hp = reciever.hp - (attackHealCheck(attacker.attack, reciever.defense()));
-  $(".topbar").append("<li>" + attacker.name + " deals " + (attackHealCheck(attacker.attack,reciever.defense())) + " Damage! to " + reciever.name + "</li>");
+  reciever.hp = reciever.hp - (attackHealCheck(attacker.attackPlus(), reciever.defense()));
+  $(".topbar").append("<li>" + attacker.name + " deals " + (attackHealCheck(attacker.attackPlus(),reciever.defense())) + " Damage! to " + reciever.name + "</li>");
 }
 
 //Player
@@ -232,6 +304,7 @@ function monsterTurn(turn) {
   } else {
     $(".topbar").append("<br>YOU DIED");
   }
+  clearDefense();
   }
 }
 //Monster behavior and lose checks
@@ -252,13 +325,21 @@ function monsterSwap() {
 function printButtons(turn) {
 
     $("#playercon0").html("<a href='#' class='playeratt'>Attack</a>");
-    $("#playercon1").html("<a href='#' class='playeratt'>Skills</a>");
+    $("#playercon1").html("<a href='#' class='playeratt'>Charge</a>");
     $("#playercon2").html("<a href='#' class='playeratt'>Defend</a>");
     $("#playercon3").html("<a href='#' class='playeratt'>Item</a>");
     $("#playercon4").html("<a href='#' class='playeratt'>Cry</a>");
     $("#playercon5").html("<a href='#' class='playeratt'>Run</a>");
 
 
+}
+function turnHidden(turn) {
+  $("#playercon0").html("");
+  $("#playercon1").html("");
+  $("#playercon2").html("");
+  $("#playercon3").html("");
+  $("#playercon4").html("");
+  $("#playercon5").html("");
 }
 
 function turnUI(turn) {
@@ -298,7 +379,18 @@ $(function(){
     monsterTurn(turn);
     printStatus(char1,char2,char3);
     turn += 1;
-    turnUI(turn);
+    turnHidden(turn);
+    setTimeout(function(){ turnUI(turn); printButtons(turn); }, 200);
+  });
+  $("#playercon1").click(function() {
+    $(".topbar").html("");
+    $(".topbar").removeClass("redtext");
+    charging(char1,char2,char3,turn);
+    monsterTurn(turn);
+    printStatus(char1,char2,char3);
+    turn += 1;
+    turnHidden(turn);
+    setTimeout(function(){ turnUI(turn); printButtons(turn); }, 200);
   });
 
   $("#playercon2").click(function() {
@@ -308,8 +400,10 @@ $(function(){
     monsterTurn(turn);
     printStatus(char1,char2,char3);
     turn += 1;
-    turnUI(turn);
+    turnHidden(turn);
+    setTimeout(function(){ turnUI(turn); printButtons(turn); }, 200);
   });
+
 
   $("#playercon5").click(function() {
     $(".topbar").html("");
