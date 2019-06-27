@@ -4,12 +4,16 @@
 
 
 body {
+  font-family: fantasy;
   text-align: center;
   margin-top:2%;
-  background-color: #FFDAD0;
+  background-image: url("./img/maze1.jpg");
 }
 
 .card {
+
+  font-family: fantasy;
+  background-color: grey;
   height:125px;
   font-size:80px;
 }
@@ -21,6 +25,9 @@ body {
 }
 
 .monstView {
+  color: lavender;
+  background-image: url("./img/dgbg.gif");
+  background-size: cover;
   height:600px;
 }
 
@@ -29,13 +36,19 @@ body {
 }
 
 .player {
-  height:200px;
-  font-size:40px;
+  color: lavender;
+  text-shadow: 2px 2px green;
+  height:150px;
+  font-size:30px;
 }
 
 .playercon {
   font-size:30px;
   height:100px;
+}
+#playercon0{
+  background-size: cover;
+  background-image: url("./img/sword.jpg");
 }
 
 .redborder {

@@ -37,6 +37,10 @@ module.exports = {
         exclude: /node_modules/,
         loader: "eslint-loader"
       },
+      {
+        test: /\.(png|jpg|gif)$/,
+        loader: 'url-loader'
+      },
       // new rule
       {
         test: /\.js$/,
