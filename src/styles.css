@@ -34,5 +34,14 @@ body {
 }
 
 .playercon {
+  font-size:30px;
   height:100px;
+}
+
+.redborder {
+  border: 5px dashed red;
+}
+
+.greenborder {
+  border: 5px dotted green;
 }
